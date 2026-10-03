@@ -1,0 +1,86 @@
+name: Takt - Vollstaendiges Download-ZIP
+'on':
+  push:
+    branches: [main, packaging/complete-ftp-2026-10-03]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Vorhandene isolierte Tests ausfuehren
+        run: |
+          set -euo pipefail
+          find public tests tools -type f -name '*.php' -print0 | xargs -0 -n1 php -l > /tmp/takt-complete-lint.txt
+          php tests/unit.php . > /tmp/takt-complete-unit.json
+          python3 tests/http_checks.py . > /tmp/takt-complete-http.json
+          php tests/config_recovery.php > /tmp/takt-complete-recovery.txt
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Vollstaendige Anwendung und Quellcode als ZIP erstellen
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import hashlib, json, subprocess, zipfile
+          root = Path.cwd()
+          out = root / 'dist-download'
+          out.mkdir()
+          tracked = subprocess.check_output(['git', 'ls-files', '-z']).decode().split('\0')
+          tracked = [p for p in tracked if p]
+          assert 'public/system/config.php' not in tracked, 'Private Konfiguration darf nicht versioniert sein.'
+          selected, excluded = [], []
+          private_dirs = ('public/system/fotos/', 'public/system/rechnungen/',
+                          'public/system/angebote/', 'public/system/vertraege/',
+                          'public/system/backups/', 'public/uploads/betriebe/')
+          for name in tracked:
+              if not name.startswith('public/'):
+                  continue
+              path = root / name
+              assert not path.is_symlink(), 'Keine symbolischen Links im Upload: ' + name
+              if name == 'public/setup.php' or name == 'public/system/cron.lock':
+                  excluded.append(name)
+                  continue
+              if name.startswith(private_dirs) and path.name not in ('.gitkeep', '.htaccess'):
+                  raise RuntimeError('Laufzeitdaten im Repository: ' + name)
+              if path.suffix.lower() in ('.log', '.bak') or path.name.startswith(('notfall-', 'takt-zugang-')):
+                  raise RuntimeError('Nicht fuer den Upload vorgesehene Datei: ' + name)
+              if path.is_file():
+                  selected.append(name)
+          required = ['public/index.php', 'public/.htaccess', 'public/system/.htaccess',
+                      'public/admin/index.php', 'public/anbieter/index.php', 'public/api/index.php',
+                      'public/portal/index.php', 'public/system/bootstrap.php',
+                      'public/app/app.js', 'public/system/lib']
+          for name in required:
+              assert name in selected or any(p.startswith(name + '/') for p in selected), name
+          ftp = out / 'Takt-Komplett-FTP-Basis.zip'
+          with zipfile.ZipFile(ftp, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+              for name in sorted(selected):
+                  z.write(root / name, name)
+          with zipfile.ZipFile(ftp) as z:
+              assert z.testzip() is None
+              assert set(z.namelist()) == set(selected)
+              for name in selected:
+                  assert z.read(name) == (root / name).read_bytes(), name
+          source = out / 'Takt-Komplett-Quellcode.zip'
+          subprocess.run(['git', 'archive', '--format=zip', '--output=' + str(source), 'HEAD'], check=True)
+          with zipfile.ZipFile(source) as z:
+              assert z.testzip() is None
+          report = {'commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+                    'ftp_files': len(selected), 'ftp_bytes': ftp.stat().st_size,
+                    'excluded_from_existing_installation_upload': excluded,
+                    'ftp_sha256': hashlib.sha256(ftp.read_bytes()).hexdigest(),
+                    'files': {name: hashlib.sha256((root/name).read_bytes()).hexdigest() for name in sorted(selected)},
+                    'note': 'Vollstaendige Anwendungsdateien fuer bestehende Installation. Keine private Konfiguration, kein Setup, kein SQL-Import, kein Serverupload.'}
+          (out / 'package-report.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
+          print('ZIP geprueft:', len(selected), 'Anwendungsdateien;', ftp.stat().st_size, 'Bytes.')
+          PY
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: Takt-Komplett-Download
+          path: dist-download/
+          if-no-files-found: error
+          retention-days: 7
