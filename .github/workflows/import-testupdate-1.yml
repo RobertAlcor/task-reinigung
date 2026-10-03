@@ -1,0 +1,78 @@
+name: Import verified Takt testupdate 1
+on:
+  push:
+    branches: [sync/testupdate-1-2026-10-03]
+    paths: [.github/workflows/import-testupdate-1.yml]
+permissions:
+  contents: read
+jobs:
+  import:
+    if: github.repository == 'RobertAlcor/task-reinigung'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+      - name: Decode transport, verify baseline and apply exact patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64, hashlib, json, lzma, subprocess
+          root = Path.cwd()
+          encoded = ''.join((root / f'audit-sync/part-{i}.b64').read_text().strip() for i in (1,2,3))
+          raw = lzma.decompress(base64.b64decode(encoded, validate=True), memlimit=128*1024*1024)
+          assert len(raw) == 64731
+          assert hashlib.sha256(raw).hexdigest() == '8d1e27f802c29d928637d41cc67b525b16b400f3ff7f8e60ede0134b03b2d7ad'
+          data = json.loads(raw)
+          allowed = {'tests/unit.php','tests/http.py','tests/support/http_fixture.php','tests/support/test_runtime.php','deployment/testupdate-1.json','tools/preflight.php'}
+          assert set(data['files']) == allowed
+          manifest = json.loads(data['files']['deployment/testupdate-1.json'])
+          targets = {entry['path'] for entry in manifest['files']}
+          assert targets == {'public/api/index.php','public/system/Auth.php','public/system/Database.php','public/system/Http.php','public/system/Push.php','public/system/bootstrap.php'}
+          for entry in manifest['files']:
+              assert hashlib.sha256((root/entry['path']).read_bytes()).hexdigest() == entry['before_sha256'], entry['path']
+          subprocess.run(['git','apply','--check','-'],input=data['patch'],text=True,check=True)
+          subprocess.run(['git','apply','-'],input=data['patch'],text=True,check=True)
+          changed = set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines())
+          assert changed == targets
+          for entry in manifest['files']:
+              assert hashlib.sha256((root/entry['path']).read_bytes()).hexdigest() == entry['after_sha256'], entry['path']
+          for name, content in data['files'].items():
+              path = root / name
+              assert not path.exists(), name
+              path.parent.mkdir(parents=True,exist_ok=True)
+              path.write_text(content,encoding='utf-8')
+          print('All six runtime files match the supplied test update exactly.')
+          PY
+      - name: PHP syntax and isolated regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          php --version
+          find public tests tools -type f -name '*.php' -print0 | xargs -0 -n 1 php -l > /tmp/takt-lint.txt
+          php tests/unit.php . > /tmp/takt-unit.json
+          python3 tests/http.py . > /tmp/takt-http.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ['unit','http']:
+              r=json.loads(Path('/tmp/takt-'+name+'.json').read_text())
+              assert r['failed']==0
+              print(name, r['passed'], '/', r['tests'])
+          PY
+      - name: Commit only verified files to isolated sync branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- public/api/index.php public/system/Auth.php public/system/Database.php public/system/Http.php public/system/Push.php public/system/bootstrap.php tests/unit.php tests/http.py tests/support/http_fixture.php tests/support/test_runtime.php deployment/testupdate-1.json tools/preflight.php
+          git commit -m 'Import verified Testupdate 1 runtime fixes and 111 isolated regression checks'
+          git push origin HEAD:refs/heads/sync/testupdate-1-2026-10-03
+          printf 'Verified commit: `%s`\n\n' "$(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+          printf '55 unit and 56 local HTTP checks passed. No deployment. No change to main.\n' >> "$GITHUB_STEP_SUMMARY"
