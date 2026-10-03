@@ -45,9 +45,26 @@ final class Push
         return $ok;
     }
 
+    /** Nur bekannte Push-Dienste; keine beliebigen serverseitigen Ziel-URLs. */
+    public static function validEndpoint(string $endpoint): bool
+    {
+        if (strlen($endpoint) > 2048 || preg_match('/[\\x00-\\x20\\x7f\\\\]/', $endpoint)) { return false; }
+        $u = parse_url($endpoint);
+        if (!is_array($u) || ($u['scheme'] ?? '') !== 'https' || isset($u['user']) || isset($u['pass']) || isset($u['fragment'])) { return false; }
+        if (isset($u['port']) && $u['port'] !== 443) { return false; }
+        $host = strtolower((string) ($u['host'] ?? ''));
+        $path = (string) ($u['path'] ?? '');
+        if ($path === '' || $path === '/') { return false; }
+        return in_array($host, ['fcm.googleapis.com', 'updates.push.services.mozilla.com'], true)
+            || preg_match('/^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+push\\.apple\\.com$/D', $host) === 1
+            || preg_match('/^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+notify\\.windows\\.com$/D', $host) === 1;
+    }
+
     /** Ein Push ohne Nutzlast an einen Endpoint. Liefert den HTTP-Status. */
     public static function send(string $endpoint, int $ttl = 86400): int
     {
+        if (!self::validEndpoint($endpoint)) { return 400; }
+        $ttl = max(0, min(2419200, $ttl));
         $k = self::keys();
         $aud = parse_url($endpoint, PHP_URL_SCHEME) . '://' . parse_url($endpoint, PHP_URL_HOST);
         $subject = 'mailto:' . (Database::get()->rawOne("SELECT wert FROM anbieter_einstellungen WHERE schluessel = 'email'")['wert'] ?? 'office@example.at');
@@ -55,13 +72,13 @@ final class Push
         $headers = ['Authorization: vapid t=' . $jwt . ', k=' . $k['public'], 'TTL: ' . $ttl, 'Content-Length: 0', 'Urgency: high'];
         if (function_exists('curl_init')) {
             $ch = curl_init($endpoint);
-            curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => '', CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 10, CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_HTTPHEADER => $headers]);
+            curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_FOLLOWLOCATION => false, CURLOPT_MAXREDIRS => 0, CURLOPT_PROTOCOLS => CURLPROTO_HTTPS, CURLOPT_SSL_VERIFYPEER => true, CURLOPT_SSL_VERIFYHOST => 2, CURLOPT_POSTFIELDS => '', CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 10, CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_HTTPHEADER => $headers]);
             curl_exec($ch);
             $code = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE); curl_close($ch);
             return $code;
         }
         // Ohne curl: Stream-Kontext
-        $ctx = stream_context_create(['http' => ['method' => 'POST', 'header' => implode("\r\n", $headers), 'content' => '', 'timeout' => 10, 'ignore_errors' => true]]);
+        $ctx = stream_context_create(['http' => ['method' => 'POST', 'header' => implode("\r\n", $headers), 'content' => '', 'timeout' => 10, 'ignore_errors' => true, 'follow_location' => 0, 'max_redirects' => 0]]);
         @file_get_contents($endpoint, false, $ctx);
         $status = $http_response_header[0] ?? '';
         return preg_match('/\s(\d{3})\s/', $status, $m) === 1 ? (int) $m[1] : 0;

@@ -1,5 +1,7 @@
 # Takt — Software für Reinigungsbetriebe
 
+> **Stand 03.10.2026: Testupdate 1, keine Verkaufsfreigabe.** Die sechs geprüften Laufzeitkorrekturen liegen jetzt im Quellcode. GitHub-Aktualisierung ist kein Upload auf Easyname. Download, genaue Dateiliste und offene Freigabepunkte: [VEROEFFENTLICHUNG.md](VEROEFFENTLICHUNG.md). Für dieses Testupdate **kein SQL importieren und setup.php nicht ausführen**.
+
 Webbasierte Verwaltungssoftware für Reinigungsbetriebe, entwickelt für
 österreichisches Recht. Mandantenfähig: ein Anbieter betreut mehrere Betriebe.
 
@@ -54,7 +56,7 @@ AGB und Auftragsverarbeitungsvertrag liegen versioniert in
 - Web Push mit VAPID, ohne Fremdbibliothek (OpenSSL)
 - Verschlüsselung sensibler Felder (SVNR, IBAN, Alarmcodes) mit AES-256-GCM
 
-## Installation
+## Neuinstallation
 
 1. Inhalt von `public/` auf den Webspace hochladen, Domain auf diesen
    Ordner zeigen lassen
@@ -63,12 +65,11 @@ AGB und Auftragsverarbeitungsvertrag liegen versioniert in
 4. **`setup.php` danach löschen**
 5. Cronjob alle 15 Minuten auf die URL aus dem Anbieter-Dashboard
 
-Ausführlich in [INSTALLATION.md](INSTALLATION.md).
+Ausführlich in [INSTALLATION.md](INSTALLATION.md). Dies sind Schritte für eine Neuinstallation, nicht für Testupdate 1.
 
 ### Bestehende Installation aktualisieren
 
-Dateien überschreiben, dann `datenbank/AKTUALISIEREN.sql` importieren.
-Meldungen „Duplicate column" sind harmlos.
+Für **Testupdate 1** ausschließlich die sechs Dateien aus [VEROEFFENTLICHUNG.md](VEROEFFENTLICHUNG.md) ersetzen. Zuvor sichern; keine Datenbankänderung und kein Setup nötig. SQL-Migrationen nicht pauschal bei jedem Dateiupdate ausführen, sondern nur nach einer passenden versionsbezogenen Anleitung.
 
 ## Konfiguration
 
@@ -79,8 +80,13 @@ Vorlage: `public/system/config.beispiel.php`.
 > Wird der Verschlüsselungsschlüssel geändert, sind bereits gespeicherte
 > SVNR, IBAN und Alarmcodes unlesbar.
 
+## Tests und Projektablauf
+
+`php tests/unit.php .` und `python3 tests/http_checks.py .` führen die isolierten Regressionstests aus. Sie verwenden fiktive Daten und ersetzen keinen vollständigen Anwendungs- oder Live-Sicherheitstest. Die Paket- und Serverautomatisierung ist noch nicht eingerichtet. [AGENTS.md](AGENTS.md) hält den vereinbarten GitHub-Arbeitsablauf fest.
+
 ## Dokumentation
 
+- [VEROEFFENTLICHUNG.md](VEROEFFENTLICHUNG.md) — GitHub-Stand, Download und Easyname
 - [LIESMICH.md](LIESMICH.md) — technische Dokumentation aller Module
 - [INSTALLATION.md](INSTALLATION.md) — Einrichtung Schritt für Schritt
 - [TESTPLAN.pdf](TESTPLAN.pdf) — 161 Prüfschritte, [Formular zum Ausfüllen](TESTPLAN-Formular.pdf)

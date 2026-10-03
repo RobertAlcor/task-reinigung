@@ -1,0 +1,36 @@
+{
+  "release": "2026-10-03-testversion-1",
+  "baseline_tree": "04d539ab80bea420d66833d9170d869d3e9ccd4b",
+  "files": [
+    {
+      "path": "public/api/index.php",
+      "before_sha256": "d8850d31bc464c8d93ce5df62a1b789436826fc385855e0761ec7d81dbc63bbd",
+      "after_sha256": "999009484e8360ad5154eb55330a18e7f1a6292c37f3ed0ad634589cf82ee2e1"
+    },
+    {
+      "path": "public/system/Auth.php",
+      "before_sha256": "2fa686bfd4256b47f5cad9247d3d14dff5a3fb1480d3b8290102696b98e6d389",
+      "after_sha256": "a8f0525a7113d037ab3257cbc566149feaf27b2d4ba30c068699806f61207057"
+    },
+    {
+      "path": "public/system/Database.php",
+      "before_sha256": "c21a3e354ea0ebc7e6fbc682abbecba02d6e43cfa7b8d37e476ddd585bb9c86c",
+      "after_sha256": "a08efb898a3fcc29285a7a949f2a670ff10e468446768101efb4525b584535d8"
+    },
+    {
+      "path": "public/system/Http.php",
+      "before_sha256": "5315a43048a51395f7cd455be91e8d6d45fb240514321b21c58605054be35b75",
+      "after_sha256": "25453e5a451f353021b236b99701da3249a5dc0ec42541c738e65e7e0f9a4a7b"
+    },
+    {
+      "path": "public/system/Push.php",
+      "before_sha256": "cd74fb231bc16489ff8723b4127cbefb55a94ad35bd3ee044fb9bb841ed3c910",
+      "after_sha256": "67f34e9e9a159294dcd088bbe0f0d34fc2ff98416d55e30a75324515d8c0f124"
+    },
+    {
+      "path": "public/system/bootstrap.php",
+      "before_sha256": "317facffb844365bf236d1a14594116bc1db29959f2652f117d227dd4c6e8f14",
+      "after_sha256": "d87f0bd56a35474be62497c861c67403e4672d13276003c43e247e2fdb7a0b08"
+    }
+  ]
+}

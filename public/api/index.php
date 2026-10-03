@@ -44,6 +44,9 @@ $router->open('POST', 'login', static function (Request $r): array {
         (string) $r->text('benutzername', 80, true),
         (string) ($r->all()['passwort'] ?? '')
     );
+    if (!empty($user['zweiter_faktor'])) {
+        return ['zweiter_faktor' => true, 'csrf' => Auth::csrfToken()];
+    }
     return [
         'benutzer' => [
             'id'    => (int) $user['id'],
@@ -52,6 +55,13 @@ $router->open('POST', 'login', static function (Request $r): array {
         ],
         'csrf' => Auth::csrfToken(),
     ];
+});
+
+/** API-Anmeldung erst nach dem zweiten Faktor vervollstaendigen. */
+$router->open('POST', 'login/zweiter-faktor', static function (Request $r): array {
+    Auth::checkCsrf(isset($_SERVER['HTTP_X_CSRF_TOKEN']) && is_string($_SERVER['HTTP_X_CSRF_TOKEN']) ? $_SERVER['HTTP_X_CSRF_TOKEN'] : null);
+    $user = Auth::completeSecondFactor((string) $r->text('code', 32, true));
+    return ['benutzer' => ['id' => (int) $user['id'], 'name' => $user['benutzername'], 'rolle' => $user['rolle']], 'csrf' => Auth::csrfToken()];
 });
 
 /** Anmeldung Mitarbeiter-App: Personalnummer und PIN, liefert Token. */
@@ -139,10 +149,10 @@ $router->patch('kunden/{id}', static function (Request $r): array {
         'notizen'       => $r->text('notizen', 4000),
     ], static fn($v) => $v !== null);
 
-    $n = Database::get()->update('kunden', $id, $data);
-    if ($n === 0) {
-        Response::error('Kunde nicht gefunden oder unverändert.', 404);
+    if (Database::get()->find('kunden', $id) === null) {
+        Response::error('Kunde nicht gefunden.', 404);
     }
+    Database::get()->update('kunden', $id, $data);
     AuditLog::write('update', 'kunden', $id, 'Kunde geändert');
     return ['geaendert' => true];
 }, $buero);
@@ -596,7 +606,7 @@ $router->open('POST', 'app/direkt', static function (Request $r): array {
     if (preg_match('/^[a-f0-9]{40}$/', $t) !== 1) { Response::error('Ungültig.', 400); }
     $dz = $db->rawOne("SELECT * FROM anbieter_direktzugang WHERE token_hash = ? AND ziel = 'app' AND verwendet_am IS NULL AND laeuft_ab > NOW()", [hash('sha256', $t)]);
     if ($dz === null) { Response::error('Abgelaufen oder ungültig.', 403); }
-    $db->raw('UPDATE anbieter_direktzugang SET verwendet_am = NOW() WHERE id = ?', [(int) $dz['id']]);
+    if ($db->raw('UPDATE anbieter_direktzugang SET verwendet_am = NOW() WHERE id = ? AND verwendet_am IS NULL AND laeuft_ab > NOW()', [(int) $dz['id']])->rowCount() !== 1) { Response::error('Abgelaufen oder bereits verwendet.', 403); }
     $mb = $db->rawOne("SELECT * FROM benutzer WHERE id = ? AND rolle = 'mitarbeiter' AND aktiv = 1", [(int) $dz['benutzer_id']]);
     if ($mb === null) { Response::error('Mitarbeiter nicht aktiv.', 403); }
     return ['token' => Auth::appTokenOhnePin($mb)];
@@ -610,7 +620,7 @@ $router->get('app/push/schluessel', static fn(): array => ['public' => \App\Push
 $router->post('app/push/abo', static function (Request $r): array {
     $u = Auth::user(); $db = Database::get(); $d = $r->all();
     $ep = trim((string) ($d['endpoint'] ?? ''));
-    if ($ep === '' || filter_var($ep, FILTER_VALIDATE_URL) === false || !str_starts_with($ep, 'https://')) { Response::error('Ungültiges Abo.', 422); }
+    if (!\App\Push::validEndpoint($ep)) { Response::error('Ungültiges Abo.', 422); }
     $db->raw('INSERT INTO push_abos (betrieb_id, mitarbeiter_id, endpoint, endpoint_hash, p256dh, auth, geraet) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE mitarbeiter_id = VALUES(mitarbeiter_id), betrieb_id = VALUES(betrieb_id), p256dh = VALUES(p256dh), auth = VALUES(auth), geraet = VALUES(geraet), fehler = 0',
         [$db->tenant(), (int) $u['mitarbeiter_id'], $ep, hash('sha256', $ep), mb_substr((string) ($d['p256dh'] ?? ''), 0, 200) ?: null, mb_substr((string) ($d['auth'] ?? ''), 0, 100) ?: null, mb_substr((string) ($d['geraet'] ?? ''), 0, 120) ?: null]);
     return ['ok' => true];

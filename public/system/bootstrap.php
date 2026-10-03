@@ -14,7 +14,7 @@ declare(strict_types=1);
 $configFile = __DIR__ . '/config.php';
 if (!is_file($configFile)) {
     http_response_code(500);
-    exit('Konfiguration fehlt. Bitte system/config.example.php nach system/config.php kopieren und ausfüllen.');
+    exit('Konfiguration fehlt. Bitte system/config.beispiel.php nach system/config.php kopieren und ausfüllen.');
 }
 $config = require $configFile;
 
@@ -52,13 +52,6 @@ spl_autoload_register(static function (string $class): void {
     }
 });
 
-// --- Dienste initialisieren ------------------------------------------
-
-App\Database::init($config['db']);
-App\Crypto::init($config['crypto']['key']);
-App\Auth::init($config['security']);
-App\Mailer::init($config['mail'] ?? []);
-
 // --- Einheitliche Fehlerbehandlung -----------------------------------
 
 set_exception_handler(static function (Throwable $e) use ($debug): void {
@@ -78,9 +71,7 @@ set_exception_handler(static function (Throwable $e) use ($debug): void {
 
     if ($isJson) {
         http_response_code($status);
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode(['ok' => false, 'fehler' => $message], JSON_UNESCAPED_UNICODE);
-        exit;
+        App\Response::json(['ok' => false, 'fehler' => $message], $status);
     }
 
     http_response_code($status);
@@ -88,6 +79,14 @@ set_exception_handler(static function (Throwable $e) use ($debug): void {
     echo '<p style="font:16px/1.6 system-ui;padding:40px;max-width:600px">' . htmlspecialchars($message, ENT_QUOTES) . '</p>';
     exit;
 });
+
+// --- Dienste initialisieren ------------------------------------------
+
+App\Response::securityHeaders();
+App\Database::init($config['db']);
+App\Crypto::init($config['crypto']['key']);
+App\Auth::init($config['security']);
+App\Mailer::init($config['mail'] ?? []);
 
 // --- Hilfsfunktion: Ausgabe in HTML immer maskieren -------------------
 

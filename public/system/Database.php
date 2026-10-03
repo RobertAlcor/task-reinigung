@@ -46,7 +46,8 @@ final class Database
             ]);
             // Strikter Modus, damit stille Datenverluste ausgeschlossen sind
             $this->pdo->exec("SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO'");
-            $this->pdo->exec("SET SESSION time_zone = '+01:00'");
+            // PHP setzt die Anwendungszeitzone bereits in bootstrap.php.
+            $this->raw('SET SESSION time_zone = ?', [date('P')]);
         } catch (PDOException $e) {
             // Details nie nach aussen geben
             error_log('DB-Verbindung fehlgeschlagen: ' . $e->getMessage());
@@ -82,6 +83,11 @@ final class Database
             throw new RuntimeException('Ungültige Betriebs-ID.');
         }
         $this->tenantId = $tenantId;
+    }
+
+    public function clearTenant(): void
+    {
+        $this->tenantId = null;
     }
 
     public function tenant(): int
@@ -226,7 +232,9 @@ final class Database
             $this->pdo->commit();
             return $result;
         } catch (\Throwable $e) {
-            $this->pdo->rollBack();
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
             throw $e;
         }
     }
