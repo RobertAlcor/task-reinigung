@@ -41,9 +41,18 @@ final class Response
 
     public static function json(mixed $data, int $status = 200): never
     {
+        try {
+            $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE | JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            error_log('JSON-Antwort konnte nicht erzeugt werden: ' . $e->getMessage());
+            $status = 500;
+            $json = '{"ok":false,"fehler":"Antwort konnte nicht erstellt werden."}';
+        }
         http_response_code($status);
         header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        header('Cache-Control: no-store, private');
+        header('Pragma: no-cache');
+        echo $json;
         exit;
     }
 
@@ -121,6 +130,10 @@ final class Router
 
             if (!isset($this->public[$key])) {
                 Auth::require($roles);
+                if (!in_array($method, ['GET', 'HEAD', 'OPTIONS'], true) && !Auth::usesBearerToken()) {
+                    $csrf = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
+                    Auth::checkCsrf(is_string($csrf) ? $csrf : null);
+                }
             }
             $result = $handler(new Request($params));
             Response::ok($result);
@@ -163,9 +176,27 @@ final class Request
 
     public function __construct(private array $params = [])
     {
-        $raw = file_get_contents('php://input') ?: '';
-        $decoded = $raw !== '' ? json_decode($raw, true) : null;
-        $this->body = is_array($decoded) ? $decoded : $_POST;
+        $type = strtolower(trim(explode(';', (string) ($_SERVER['CONTENT_TYPE'] ?? ''))[0]));
+        if ($type !== 'application/json' && !str_ends_with($type, '+json')) {
+            // Multipart-Dateiuploads nicht erneut vollstaendig in den Speicher lesen.
+            $this->body = $_POST;
+            return;
+        }
+        $maxBytes = 1024 * 1024;
+        if ((int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > $maxBytes) {
+            Response::error('Anfrage zu gross.', 413);
+        }
+        $raw = file_get_contents('php://input', false, null, 0, $maxBytes + 1);
+        if ($raw === false || strlen($raw) > $maxBytes) { Response::error('Anfrage zu gross.', 413); }
+        try {
+            $decoded = json_decode($raw, true, 64, JSON_THROW_ON_ERROR | JSON_BIGINT_AS_STRING);
+        } catch (\JsonException) {
+            Response::error('Ungueltiges JSON.', 400);
+        }
+        if (!is_array($decoded) || !str_starts_with(ltrim($raw), '{')) {
+            Response::error('Ein JSON-Objekt wird erwartet.', 400);
+        }
+        $this->body = $decoded;
     }
 
     public function param(string $name): ?string
@@ -175,11 +206,11 @@ final class Request
 
     public function paramInt(string $name): int
     {
-        $v = $this->params[$name] ?? '';
-        if (preg_match('/^\d+$/', (string) $v) !== 1) {
+        $v = self::parseInteger($this->params[$name] ?? null);
+        if ($v === null || $v < 1) {
             Response::error('Ungültige ID in der Adresse.', 400);
         }
-        return (int) $v;
+        return $v;
     }
 
     public function query(string $name, ?string $default = null): ?string
@@ -190,8 +221,18 @@ final class Request
 
     public function queryInt(string $name, int $default = 0): int
     {
-        $v = $_GET[$name] ?? null;
-        return is_string($v) && preg_match('/^-?\d+$/', $v) === 1 ? (int) $v : $default;
+        return self::parseInteger($_GET[$name] ?? null) ?? $default;
+    }
+
+    private static function parseInteger(mixed $value): ?int
+    {
+        if (is_int($value)) { return $value; }
+        if (!is_string($value) || preg_match('/^-?\d+$/D', $value) !== 1) { return null; }
+        $negative = str_starts_with($value, '-');
+        $digits = ltrim($negative ? substr($value, 1) : $value, '0');
+        $normal = $digits === '' ? '0' : (($negative ? '-' : '') . $digits);
+        $result = filter_var($normal, FILTER_VALIDATE_INT);
+        return $result === false ? null : $result;
     }
 
     public function all(): array
@@ -216,7 +257,14 @@ final class Request
         if (!is_string($v)) {
             Response::error('Ungültiger Wert.', 422, [$key => 'Text erwartet.']);
         }
+        if (str_contains($v, "\0")) {
+            Response::error('Ungültiger Wert.', 422, [$key => 'Nullzeichen sind nicht erlaubt.']);
+        }
         $v = trim($v);
+        if ($v === '') {
+            if ($required) { Response::error('Pflichtfeld fehlt.', 422, [$key => 'Bitte ausfüllen.']); }
+            return null;
+        }
         if (mb_strlen($v) > $max) {
             Response::error('Eingabe zu lang.', 422, [$key => "Höchstens {$max} Zeichen."]);
         }
@@ -232,10 +280,10 @@ final class Request
             }
             return null;
         }
-        if (!is_numeric($v) || (int) $v != $v) {
-            Response::error('Ungültige Zahl.', 422, [$key => 'Ganze Zahl erwartet.']);
+        $i = self::parseInteger($v);
+        if ($i === null) {
+            Response::error('Ungültige Zahl.', 422, [$key => 'Ganze Zahl im gültigen Wertebereich erwartet.']);
         }
-        $i = (int) $v;
         if ($min !== null && $i < $min) {
             Response::error('Wert zu klein.', 422, [$key => "Mindestens {$min}."]);
         }
@@ -258,8 +306,8 @@ final class Request
         if (is_string($v)) {
             $v = str_replace(',', '.', $v);
         }
-        if (!is_numeric($v)) {
-            Response::error('Ungültiger Betrag.', 422, [$key => 'Zahl erwartet.']);
+        if ((!is_int($v) && !is_float($v) && !is_string($v)) || !is_numeric($v) || !is_finite((float) $v)) {
+            Response::error('Ungültiger Betrag.', 422, [$key => 'Endliche Zahl erwartet.']);
         }
         return (float) $v;
     }
