@@ -1,0 +1,47 @@
+name: Takt - Konfiguration reparieren - isolierte Tests
+'on':
+  push:
+    branches: [main, repair/config-missing-2026-10-03]
+    paths:
+      - 'tools/config-recovery/**'
+      - 'tests/config_recovery.php'
+      - '.github/workflows/config-recovery.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: PHP syntax and isolated recovery tests
+        run: |
+          set -euo pipefail
+          find public tests tools -name '*.php' -print0 | xargs -0 -n1 php -l > /tmp/takt-lint.txt
+          php tests/config_recovery.php
+          php tests/unit.php .
+          python3 tests/http_checks.py .
+      - name: Build offline repair starter without credentials
+        run: |
+          python3 tools/config-recovery/build.py
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, re, zipfile
+          root=Path('tools/config-recovery')
+          html=(root/'START-HIER.html').read_text()
+          text=re.search(r'<script id="template" type="application/json">(.*?)</script>',html,re.S).group(1)
+          assert json.loads(text)==(root/'recovery.template.php').read_text()
+          assert "connect-src 'none'" in html
+          with zipfile.ZipFile(root/'Takt-Konfiguration-Reparatur.zip') as z:
+              assert set(z.namelist())=={'START-HIER.html','ANLEITUNG.md'}
+          print('Offline package and template identity verified. No Easyname connection.')
+          PY
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: Takt-Konfiguration-Reparatur
+          path: tools/config-recovery/Takt-Konfiguration-Reparatur.zip
+          if-no-files-found: error
+          retention-days: 7
