@@ -1,10 +1,12 @@
 name: Takt - Konfiguration reparieren - isolierte Tests
 'on':
   push:
-    branches: [main, repair/config-missing-2026-10-03]
+    branches: [main, repair/config-missing-2026-10-03, repair/ftp-paket-auto-2026-10-03]
     paths:
       - 'tools/config-recovery/**'
       - 'tests/config_recovery.php'
+      - 'tests/test_config_upload.py'
+      - 'public/index.php'
       - '.github/workflows/config-recovery.yml'
   workflow_dispatch:
 permissions:
@@ -24,6 +26,7 @@ jobs:
           php tests/config_recovery.php
           php tests/unit.php .
           python3 tests/http_checks.py .
+          python3 -m unittest discover -s tests -p 'test_config_upload.py' -v
       - name: Build offline repair starter without credentials
         run: |
           python3 tools/config-recovery/build.py

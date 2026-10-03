@@ -1,0 +1,13 @@
+{
+  "release": "config-recovery-entry-2026-10-03",
+  "baseline_commit": "0a19be5c06f77176315317a22ec1e0eb54adad8b",
+  "files": [
+    {
+      "path": "public/index.php",
+      "before_sha256": "48cb065ca1fa7fa93b7a72441f794863e83a75444a3feadb8f25c943d0593d19",
+      "after_sha256": "735da17706bef203de1bdabb354bd1e0fbf013ead8cdb4169d4d8fb792098f73"
+    }
+  ],
+  "generated": "public/config-reparieren.php wird aus tools/config-recovery/recovery.template.php mit privatem Freigabehash und Ablaufzeit erzeugt; niemals committen.",
+  "database_migration": false
+}

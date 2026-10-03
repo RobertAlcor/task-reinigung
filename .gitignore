@@ -5,6 +5,9 @@ public/system/config.php
 # Notfall-/Einmalzugänge (Generalschlüssel)
 public/takt-zugang-*.php
 public/notfall-*.php
+public/config-reparieren.php
+public/system/.config-recovery-*
+Takt-Zugang-PRIVAT.txt
 
 # Laufzeitdaten der Betriebe (Kundendaten, Fotos, Rechnungen)
 public/system/fotos/*

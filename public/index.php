@@ -15,6 +15,21 @@ use App\Auth;
 use App\Database;
 use App\Website;
 
+// Nur ohne Konfiguration: das mitgelieferte Reparaturformular öffnen.
+if (!file_exists(__DIR__ . '/system/config.php')
+    && !is_link(__DIR__ . '/system/config.php')
+    && is_file(__DIR__ . '/config-reparieren.php')
+    && !is_link(__DIR__ . '/config-reparieren.php')
+    && strtolower((string) ($_SERVER['HTTP_HOST'] ?? '')) === 'reinigung.webdesign-alcor.at'
+    && in_array($_SERVER['REQUEST_METHOD'] ?? '', ['GET', 'HEAD'], true)
+) {
+    header('Cache-Control: no-store');
+    header('Referrer-Policy: no-referrer');
+    header('X-Robots-Tag: noindex, nofollow');
+    header('Location: https://reinigung.webdesign-alcor.at/config-reparieren.php', true, 302);
+    exit;
+}
+
 $config = require __DIR__ . '/system/bootstrap.php';
 \App\Response::securityHeaders();
 
