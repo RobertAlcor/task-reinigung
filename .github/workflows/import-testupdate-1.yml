@@ -43,6 +43,8 @@ jobs:
           for entry in manifest['files']:
               assert hashlib.sha256((root/entry['path']).read_bytes()).hexdigest() == entry['after_sha256'], entry['path']
           for name, content in data['files'].items():
+              if name == 'tests/http.py':
+                  name = 'tests/http_checks.py'
               path = root / name
               assert not path.exists(), name
               path.parent.mkdir(parents=True,exist_ok=True)
@@ -56,7 +58,7 @@ jobs:
           php --version
           find public tests tools -type f -name '*.php' -print0 | xargs -0 -n 1 php -l > /tmp/takt-lint.txt
           php tests/unit.php . > /tmp/takt-unit.json
-          python3 tests/http.py . > /tmp/takt-http.json
+          python3 tests/http_checks.py . > /tmp/takt-http.json
           python3 - <<'PY'
           import json
           from pathlib import Path
@@ -71,7 +73,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- public/api/index.php public/system/Auth.php public/system/Database.php public/system/Http.php public/system/Push.php public/system/bootstrap.php tests/unit.php tests/http.py tests/support/http_fixture.php tests/support/test_runtime.php deployment/testupdate-1.json tools/preflight.php
+          git add -- public/api/index.php public/system/Auth.php public/system/Database.php public/system/Http.php public/system/Push.php public/system/bootstrap.php tests/unit.php tests/http_checks.py tests/support/http_fixture.php tests/support/test_runtime.php deployment/testupdate-1.json tools/preflight.php
           git commit -m 'Import verified Testupdate 1 runtime fixes and 111 isolated regression checks'
           git push origin HEAD:refs/heads/sync/testupdate-1-2026-10-03
           printf 'Verified commit: `%s`\n\n' "$(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
