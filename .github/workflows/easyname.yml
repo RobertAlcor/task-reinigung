@@ -1,0 +1,80 @@
+name: Takt - Tests und Easyname
+'on':
+  push:
+    branches: [main, feature/easyname-ftps-2026-10-03]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      aktion:
+        description: 'pruefen liest nur; hochladen uebertraegt Testupdate 1'
+        type: choice
+        required: true
+        default: pruefen
+        options: [pruefen, hochladen]
+      zielordner:
+        description: 'Erst auto pruefen; beim Upload den gemeldeten FTP-Ordner angeben'
+        type: string
+        required: true
+        default: auto
+      bestaetigung:
+        description: 'Nur fuer Upload: TESTUPDATE-1 eingeben'
+        type: string
+        default: ''
+      testdaten_und_backup:
+        description: 'Nur fiktive Testdaten; eigenes vollstaendiges Backup vorhanden'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: PHP-Syntax
+        run: |
+          set -euo pipefail
+          php --version
+          find public tests tools -type f -name '*.php' -print0 | xargs -0 -n 1 php -l > /tmp/takt-lint.txt
+          wc -l /tmp/takt-lint.txt
+      - name: PHP- und lokale HTTP-Regressionstests
+        run: |
+          set -euo pipefail
+          php tests/unit.php . > /tmp/takt-unit.json
+          python3 tests/http_checks.py . > /tmp/takt-http.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ('unit', 'http'):
+              result = json.loads(Path('/tmp/takt-' + name + '.json').read_text())
+              print(name, result['passed'], '/', result['tests'])
+              assert result['failed'] == 0
+          PY
+      - name: FTPS-Sicherheitslogik ohne Netzwerk testen
+        run: python3 -m unittest discover -s tests -p 'test_easyname_*.py' -v
+  easyname:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    needs: tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    concurrency:
+      group: easyname-takt-testupdate
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: FTPS pruefen oder ausdruecklich freigegebenes Testupdate uebertragen
+        env:
+          EASYNAME_FTP_HOST: ${{ secrets.EASYNAME_FTP_HOST }}
+          EASYNAME_FTP_USER: ${{ secrets.EASYNAME_FTP_USER }}
+          EASYNAME_FTP_PASSWORD: ${{ secrets.EASYNAME_FTP_PASSWORD }}
+          EASYNAME_MODE: ${{ inputs.aktion }}
+          EASYNAME_DIR: ${{ inputs.zielordner }}
+          EASYNAME_CONFIRM: ${{ inputs.bestaetigung }}
+          EASYNAME_BACKUP: ${{ inputs.testdaten_und_backup && 'true' || 'false' }}
+        run: python3 tools/easyname_ftps.py
