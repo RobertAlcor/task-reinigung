@@ -1,0 +1,55 @@
+name: Takt isolated audit
+on:
+  push:
+    branches: ['audit/sicherheitspruefung-2026-10-03']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: takt-audit-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Inspect PHP syntax and prepare source snapshot
+        shell: bash
+        run: |
+          mkdir -p audit-output
+          php -v > audit-output/php-version.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess, json, zipfile
+          paths = subprocess.check_output(['git','ls-files','-z']).decode().split('\0')
+          results = []
+          with zipfile.ZipFile('audit-output/source-audit.zip','w',zipfile.ZIP_DEFLATED) as archive:
+              for name in paths:
+                  if not name:
+                      continue
+                  p = Path(name)
+                  if not p.is_file() or p.is_symlink():
+                      continue
+                  if p.name in ('config.php', '.env') or any(x in p.parts for x in ('uploads','backups','fotos','.git')):
+                      continue
+                  if p.suffix.lower() in ('.php','.js','.css','.sql','.md','.json','.lock','.yml') or p.name == '.htaccess':
+                      archive.write(p, name)
+                  if p.suffix.lower() == '.php':
+                      run = subprocess.run(['php','-l',str(p)],capture_output=True,text=True)
+                      results.append({'file':name,'ok':run.returncode == 0,'output':(run.stdout+run.stderr).strip()})
+          report = {'commit':subprocess.check_output(['git','rev-parse','HEAD']).decode().strip(),'php_files':len(results),'failed':sum(not x['ok'] for x in results),'results':results}
+          Path('audit-output/lint.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          print(json.dumps({k:v for k,v in report.items() if k != 'results'}))
+          PY
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: takt-source-and-lint
+          path: audit-output/
+          retention-days: 7
+          if-no-files-found: error
+      - name: Require clean syntax
+        run: python3 -c "import json,sys; sys.exit(1 if json.load(open('audit-output/lint.json'))['failed'] else 0)"
