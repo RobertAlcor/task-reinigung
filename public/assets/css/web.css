@@ -1,0 +1,187 @@
+/* White-Label-Website — Richtung "Takt". Hausfarbe kommt je Betrieb per :root{--haus}. */
+
+/* === Richtung D: Takt — vollständige Startseite ===
+   Konzept: Reinigung ist ein Taktgeschäft. Das Wochenraster trägt die Seite.
+   Eine Hausfarbe, keine Streufarben. Fotoflächen im echten Format. */
+:root{
+  --weiss:#FFFFFF; --papier:#F6F7F4; --feld:#E6EFE9;
+  --haus:#0B5D4A; --haus-2:#14876B;
+  --text:#13201B; --text-2:#5C6B64; --linie:#DDE3DE;
+  --platz-1:#DCE3DD; --platz-2:#D2DCD6; --platz-3:#E2E6DF;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--weiss);color:var(--text);-webkit-font-smoothing:antialiased;font-size:16px}
+.seite{max-width:1200px;margin:0 auto;padding:0 44px}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,.zahl b,.betrag,.marke,.woche-kopf .obj,.karte .titel{font-family:'Bricolage Grotesque',system-ui,sans-serif}
+img{display:block;max-width:100%}
+
+/* Fotoplatz: zeigt Format und Anteil, bis echte Bilder da sind */
+.foto{display:block;width:100%;object-fit:cover;border-radius:10px}
+.platz{background:var(--feld);display:flex;align-items:flex-end;padding:12px;border-radius:10px}
+.platz span{font-size:12px;color:var(--haus);background:#fff;padding:5px 10px;border-radius:100px;font-weight:600}
+
+/* --- Kopf --- */
+.kopf{display:flex;align-items:center;justify-content:space-between;padding:22px 0;position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);z-index:50;border-bottom:1px solid transparent}
+.marke{font-weight:700;font-size:20px;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.nav{display:flex;gap:28px;font-size:14.5px;color:var(--text-2);font-weight:500}
+.nav a{padding:4px 0;border-bottom:1.5px solid transparent;transition:color .18s,border-color .18s}
+.nav a:hover,.nav a:focus-visible{color:var(--haus);border-bottom-color:var(--haus)}
+.knopf{background:var(--haus);color:var(--weiss);padding:12px 22px;border-radius:6px;font-weight:600;font-size:14.5px;transition:background .18s}
+.knopf:hover{background:var(--haus-2)}
+.knopf-2{border:1.5px solid var(--linie);padding:10.5px 22px;border-radius:6px;font-weight:600;font-size:14.5px;color:var(--text);transition:border-color .18s}
+.knopf-2:hover{border-color:var(--haus)}
+.knopf-3{background:var(--weiss);color:var(--haus);padding:12px 22px;border-radius:6px;font-weight:600;font-size:14.5px;display:inline-block}
+a:focus-visible,button:focus-visible{outline:2.5px solid var(--haus);outline-offset:3px}
+
+/* --- Hero --- */
+.hero{padding:56px 0 20px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.hero h1{font-weight:800;font-size:62px;line-height:1.02;letter-spacing:-.035em;margin-bottom:20px}
+.hero p{font-size:17.5px;line-height:1.65;color:var(--text-2);max-width:42ch;margin-bottom:28px}
+.hero-tat{display:flex;gap:12px;flex-wrap:wrap}
+.woche{background:var(--papier);border:1px solid var(--linie);border-radius:14px;padding:22px}
+.woche-kopf{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;padding:0 4px}
+.woche-kopf .obj{font-weight:700;font-size:17px}
+.woche-kopf .kw{font-size:13px;color:var(--text-2)}
+.tage{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.tag{background:var(--weiss);border:1px solid var(--linie);border-radius:9px;padding:11px 9px;min-height:128px}
+.tag .name{font-size:12.5px;color:var(--text-2);font-weight:600;margin-bottom:9px;display:block}
+.block{background:var(--feld);border-left:3px solid var(--haus);border-radius:0 5px 5px 0;padding:8px 9px;margin-bottom:6px}
+.block .zeit{font-weight:700;font-size:14px;color:var(--haus);line-height:1.2;font-family:'Bricolage Grotesque'}
+.block .wer{font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.35}
+.block.frei{background:transparent;border-left:3px dashed var(--linie)}
+.block.frei .zeit{color:var(--text-2);font-weight:500;font-size:12.5px}
+.woche-fuss{margin-top:14px;padding:0 4px;font-size:12.5px;color:var(--text-2)}
+
+/* --- Breites Bild nach dem Hero --- */
+.bildband{margin-top:52px}
+.bildband .foto{height:400px}
+
+/* --- Zahlen --- */
+.zahlen{display:grid;grid-template-columns:repeat(3,1fr);gap:44px;padding:60px 0;border-bottom:1px solid var(--linie)}
+.zahl b{font-weight:800;font-size:44px;display:block;line-height:1;letter-spacing:-.03em;color:var(--haus)}
+.zahl span{font-size:15px;color:var(--text-2);display:block;margin-top:8px;line-height:1.5}
+
+/* --- Abschnitte --- */
+.abschnitt{padding:82px 0}
+.abschnitt h2{font-weight:800;font-size:42px;letter-spacing:-.032em;margin-bottom:12px;max-width:20ch}
+.vor{font-size:17px;color:var(--text-2);max-width:52ch;line-height:1.65;margin-bottom:44px}
+
+/* Leistungen mit Bild */
+.leistungen{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.leistung{background:var(--papier);border-radius:14px;overflow:hidden}
+.leistung .foto{height:190px;border-radius:0}
+.leistung .inhalt{padding:24px 24px 28px}
+.takt{background:var(--feld);color:var(--haus);font-weight:700;font-size:12.5px;padding:5px 10px;border-radius:100px;display:inline-block;margin-bottom:14px}
+.leistung h3{font-weight:700;font-size:20px;letter-spacing:-.02em;margin-bottom:9px}
+.leistung p{font-size:15px;line-height:1.65;color:var(--text-2)}
+
+/* Ablauf — echte Abfolge, daher nummeriert */
+.ablauf{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;counter-reset:s}
+.schritt{counter-increment:s;padding-top:22px;border-top:2px solid var(--haus)}
+.schritt::before{content:counter(s);font-family:'Bricolage Grotesque';font-weight:800;font-size:15px;color:var(--haus);display:block;margin-bottom:10px}
+.schritt h3{font-weight:700;font-size:18.5px;letter-spacing:-.02em;margin-bottom:8px}
+.schritt p{font-size:14.5px;line-height:1.6;color:var(--text-2)}
+
+/* --- Nachweis (Farbumkehr als Höhepunkt) --- */
+.nachweis{background:var(--haus);color:var(--weiss)}
+.nachweis-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;padding:80px 0}
+.nachweis h2{font-weight:800;font-size:40px;line-height:1.08;letter-spacing:-.032em;margin-bottom:18px;max-width:16ch}
+.nachweis p{font-size:17px;line-height:1.68;color:#B9D6CB;margin-bottom:26px;max-width:42ch}
+.karte{background:var(--weiss);border-radius:14px;padding:26px 28px;color:var(--text)}
+.karte .titel{font-weight:700;font-size:20px;letter-spacing:-.02em}
+.karte .datum{font-size:13.5px;color:var(--text-2);margin:4px 0 18px}
+.karte .z{display:flex;justify-content:space-between;font-size:14.5px;padding:11px 0;border-bottom:1px solid var(--linie);color:var(--text-2)}
+.karte .z b{color:var(--text);font-weight:600}
+.karte .bilder{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.karte .bilder .foto{aspect-ratio:4/3;border-radius:8px}
+.karte .bilder .foto::after{left:9px;bottom:8px;font-size:10.5px;padding:4px 9px}
+
+/* --- Team --- */
+.team{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.person .foto{aspect-ratio:4/5;margin-bottom:14px}
+.person b{display:block;font-weight:600;font-size:16px}
+.person span{font-size:14px;color:var(--text-2)}
+
+/* --- Stimmen --- */
+.stimmen{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.stimme{background:var(--papier);border-radius:14px;padding:28px 26px;display:flex;flex-direction:column}
+.stimme p{font-size:16px;line-height:1.68;margin-bottom:20px;flex:1}
+.stimme .wer{font-size:14px;color:var(--text-2);border-top:1px solid var(--linie);padding-top:16px}
+.stimme .wer b{display:block;color:var(--text);font-weight:600;font-size:14.5px}
+
+/* --- Gebiet --- */
+.gebiet{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.bezirke{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.bezirke span{border:1px solid var(--linie);border-radius:100px;padding:7px 15px;font-size:14px;color:var(--text-2)}
+.bezirke span.stark{background:var(--feld);border-color:var(--feld);color:var(--haus);font-weight:600}
+.gebiet .foto{aspect-ratio:4/3}
+
+/* --- Fragen --- */
+.fragen{max-width:760px}
+.frage{border-top:1px solid var(--linie);padding:22px 0}
+.frage:last-child{border-bottom:1px solid var(--linie)}
+.frage h3{font-weight:700;font-size:19px;letter-spacing:-.015em;margin-bottom:8px}
+.frage p{font-size:15.5px;line-height:1.68;color:var(--text-2);max-width:62ch}
+
+/* --- Kontakt --- */
+.kontakt{background:var(--papier)}
+.kontakt-inner{display:grid;grid-template-columns:1fr 1.05fr;gap:60px;padding:80px 0;align-items:start}
+.kontakt h2{margin-bottom:12px}
+.kontakt .info{margin-top:28px;font-size:15.5px;color:var(--text-2);line-height:2}
+.kontakt .info b{color:var(--text);font-weight:600}
+.formular{background:var(--weiss);border-radius:14px;padding:30px 30px 34px;border:1px solid var(--linie)}
+.zeile2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.feldg{margin-bottom:14px}
+.feldg label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+.feldg input,.feldg select,.feldg textarea{width:100%;border:1.5px solid var(--linie);border-radius:7px;padding:11px 13px;font:inherit;font-size:15px;background:var(--weiss);color:var(--text)}
+.feldg input:focus,.feldg select:focus,.feldg textarea:focus{outline:none;border-color:var(--haus)}
+.feldg textarea{min-height:96px;resize:vertical}
+.formular .knopf{border:0;cursor:pointer;font-family:inherit;width:100%;margin-top:6px}
+.hinweis{font-size:13px;color:var(--text-2);margin-top:14px;line-height:1.6}
+
+/* --- Fuß --- */
+.fuss b{display:block;color:var(--text);font-weight:600;margin-bottom:12px}
+.fuss p,.fuss a{line-height:1.95;display:block}
+.fuss a:hover{color:var(--haus)}
+
+/* --- Bewegung: ein einziger Aufbau beim Scrollen, sonst nichts --- */
+.js .auf{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.js .auf.da{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.js .auf{opacity:1;transform:none;transition:none}}
+@media (prefers-reduced-motion:reduce){.auf{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+@media (max-width:900px){
+  .seite{padding:0 22px}
+  .hero,.nachweis-inner,.gebiet,.kontakt-inner{grid-template-columns:1fr;gap:36px}
+  .hero h1{font-size:42px} .abschnitt h2,.nachweis h2{font-size:31px}
+  .leistungen,.team,.stimmen,.ablauf{grid-template-columns:1fr}
+  .zahlen{grid-template-columns:1fr;gap:26px}
+  .nav{display:none} .bildband .foto{height:240px}
+  .tage{grid-template-columns:repeat(3,1fr)}
+}
+
+/* Website-spezifisch */
+.marke{text-decoration:none;color:var(--text)}.marke .logo{max-height:44px;max-width:200px;display:block}.marke-text{font-family:'Bricolage Grotesque';font-weight:700;font-size:20px;letter-spacing:-.02em}
+.hero,.bildband,.zahlen,.abschnitt,.kontakt-inner,.nachweis-inner,.fuss-innen,.fuss-unten{max-width:1200px;margin-left:auto;margin-right:auto;padding-left:44px;padding-right:44px}
+.kopf{padding-left:max(44px,calc((100% - 1200px) / 2));padding-right:max(44px,calc((100% - 1200px) / 2))}
+.nachweis-inner,.kontakt-inner{box-sizing:border-box}
+.bildband .foto{height:400px}
+.leistung .foto{height:190px;border-radius:0}.leistung .platz{height:190px;border-radius:0}
+.reihe{display:grid;grid-template-columns:1fr 1.2fr;gap:44px;align-items:center;padding:28px 0;border-top:1px solid var(--linie)}
+.reihe .feld{height:240px}.reihe h2{font-size:28px;margin-bottom:10px}.reihe p{color:var(--text-2);line-height:1.65;max-width:52ch}
+.team{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}.person .foto,.person .platz{aspect-ratio:4/5;height:auto;margin-bottom:12px}.person b{display:block;font-weight:600}
+.bezirke{display:flex;flex-wrap:wrap;gap:8px}.bezirke span{background:var(--feld);color:var(--haus);border-radius:100px;padding:7px 15px;font-size:14px;font-weight:600}
+.fragen{max-width:760px}.frage{border-top:1px solid var(--linie);padding:22px 0}.frage:last-child{border-bottom:1px solid var(--linie)}.frage h3{font-weight:700;font-size:19px;margin-bottom:8px}.frage p{font-size:15.5px;line-height:1.68;color:var(--text-2)}
+.seite-kopf{padding-bottom:20px}.seite-kopf h1{font-weight:800;font-size:46px;letter-spacing:-.035em;margin-bottom:14px}.prosa{max-width:64ch;font-size:17px;line-height:1.7;color:var(--text-2)}
+.rechtstext h2{font-size:20px;margin:26px 0 8px}.rechtstext p{max-width:70ch;line-height:1.7;color:var(--text-2);margin-bottom:10px}.rechtstext .fakten{display:grid;grid-template-columns:220px 1fr;gap:10px 18px;max-width:900px}.rechtstext dt{color:var(--text-2)}.rechtstext dd{font-weight:500}
+.klein{font-size:13.5px;color:var(--text-2)}.kontakt{background:var(--papier)}
+.hp{position:absolute;left:-9999px;top:-9999px}
+.meldung{border-radius:9px;padding:12px 16px;margin-bottom:16px;font-size:15px}.meldung.ok{background:var(--feld);color:var(--haus)}.meldung.fehler{background:#FDECEA;color:#7A1C16}
+.vorschau-leiste{background:var(--text);color:#fff;text-align:center;font-size:13.5px;padding:8px}
+.consent{position:fixed;left:16px;right:16px;bottom:16px;max-width:560px;margin:0 auto;background:#fff;border:1px solid var(--linie);border-radius:12px;padding:16px 18px;box-shadow:0 8px 30px rgba(0,0,0,.12);z-index:100}.consent p{font-size:14.5px;margin-bottom:10px}.consent div{display:flex;gap:8px}
+.knopf.klein,.knopf-2.klein{padding:9px 16px;font-size:14px}
+.fuss{background:#fff;border-top:1px solid var(--linie);margin-top:40px}.fuss-innen{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;padding-top:48px;padding-bottom:36px;font-size:14.5px;color:var(--text-2)}.fuss b{display:block;color:var(--text);font-weight:600;margin-bottom:12px}.fuss p,.fuss a{line-height:1.95;display:block;color:var(--text-2);text-decoration:none}.fuss a:hover{color:var(--haus)}
+.fuss-unten{border-top:1px solid var(--linie);padding-top:20px;padding-bottom:36px;font-size:13.5px;color:var(--text-2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}.fuss-unten a{color:var(--haus)}
+@media (max-width:900px){.kopf{padding-left:20px;padding-right:20px}.hero,.bildband,.zahlen,.abschnitt,.kontakt-inner,.nachweis-inner,.fuss-innen,.fuss-unten{padding-left:20px;padding-right:20px}.reihe{grid-template-columns:1fr}.team{grid-template-columns:1fr 1fr}.fuss-innen{grid-template-columns:1fr}.rechtstext .fakten{grid-template-columns:1fr}.seite-kopf h1{font-size:32px}.kopf .knopf{display:none}}

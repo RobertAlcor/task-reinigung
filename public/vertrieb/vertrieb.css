@@ -1,0 +1,195 @@
+/* Vertriebsseite — Ergänzungen zu web.css */
+.v-hero{grid-template-columns:1fr 1.15fr;align-items:center;padding-top:52px}
+.ueberzeile{display:inline-block;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--haus);margin-bottom:16px}
+.hero-bild img{width:100%;height:auto;border-radius:14px;border:1px solid var(--linie);box-shadow:0 30px 60px -30px rgba(11,32,27,.35);display:block}
+.marke-text svg{vertical-align:-5px;margin-right:9px}
+.drei-karten{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.karte-p{background:#fff;border:1px solid var(--linie);border-radius:14px;padding:26px 26px}.karte-p b{display:block;font-family:'Bricolage Grotesque';font-size:19px;font-weight:700;letter-spacing:-.01em;line-height:1.3;margin-bottom:12px}.karte-p p{color:var(--text-2);line-height:1.65;font-size:15.5px}
+.modul{display:grid;grid-template-columns:1fr 1.3fr;gap:48px;align-items:center;padding:44px 0;border-top:1px solid var(--linie)}
+.modul.umgekehrt{grid-template-columns:1.3fr 1fr}.modul.umgekehrt .modul-text{order:2}
+.modul img{width:100%;height:auto;border-radius:12px;border:1px solid var(--linie);display:block}
+.modul h3{font-family:'Bricolage Grotesque';font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1.12;margin:10px 0 14px}.modul p{color:var(--text-2);line-height:1.68;max-width:52ch}
+.handys{display:flex;gap:18px;justify-content:center}.handys img{width:min(240px,42%);border-radius:24px;border:6px solid #13201B}.handys.eins img{width:min(300px,60%)}
+.zusatz{margin-top:28px;background:var(--feld);border-radius:12px;padding:18px 22px;line-height:1.6;color:var(--text-2)}.zusatz b{color:var(--text)}
+.recht{background:var(--haus);color:#fff;padding:80px 0;margin:30px 0}
+.recht-inner{max-width:1200px;margin:0 auto;padding:0 44px;display:grid;grid-template-columns:1fr 1.4fr;gap:60px;align-items:start}
+.recht h2{color:#fff;font-size:38px;margin-bottom:16px}.recht p{color:rgba(255,255,255,.82);line-height:1.68;max-width:44ch}
+.recht-liste{display:grid;grid-template-columns:1fr 1fr;gap:14px}.recht-liste div{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:18px 20px}.recht-liste b{display:block;font-family:'Bricolage Grotesque';font-size:18px;margin-bottom:6px}.recht-liste span{font-size:14.5px;line-height:1.6;color:rgba(255,255,255,.85)}
+.tarife{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+.tarif{background:#fff;border:1px solid var(--linie);border-radius:16px;padding:30px 28px;display:flex;flex-direction:column;position:relative}
+.tarif.hervor{border-color:var(--haus);box-shadow:0 20px 50px -30px rgba(11,93,74,.5)}
+.empfohlen{position:absolute;top:-13px;left:28px;background:var(--haus);color:#fff;font-size:12.5px;font-weight:700;padding:5px 12px;border-radius:100px}
+.tarif>b{font-family:'Bricolage Grotesque';font-size:22px;font-weight:700}.tarif .preis{font-family:'Bricolage Grotesque';font-size:44px;font-weight:800;letter-spacing:-.03em;margin:8px 0 2px;color:var(--haus)}.tarif .preis small{font-size:16px;font-weight:500;color:var(--text-2);margin-left:4px;letter-spacing:0}
+.tarif .ma{color:var(--text-2);font-size:14.5px;margin-bottom:18px}
+.tarif ul{list-style:none;padding:0;margin:0 0 24px;flex:1}.tarif li{padding:8px 0;border-top:1px solid var(--linie);font-size:15px}.tarif li::before{content:"✓";color:var(--haus);font-weight:700;margin-right:10px}
+.tarif .knopf{text-align:center}.tarif .knopf.zweit{background:#fff;color:var(--text);border:2px solid var(--linie)}
+.schritte{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}.schritte>div{border-top:2px solid var(--haus);padding-top:16px}.schritte b{display:inline-block;background:var(--haus);color:#fff;width:30px;height:30px;border-radius:50%;text-align:center;line-height:30px;font-weight:700;margin-bottom:10px}.schritte h3{font-size:18px;font-weight:700;margin-bottom:6px}.schritte p{font-size:15px;color:var(--text-2);line-height:1.6}
+@media (max-width:900px){.v-hero,.modul,.modul.umgekehrt,.recht-inner{grid-template-columns:1fr;gap:26px}.modul.umgekehrt .modul-text{order:0}.drei-karten,.tarife,.schritte,.recht-liste{grid-template-columns:1fr}.recht{padding:50px 0}.recht-inner{padding:0 20px}.recht h2{font-size:30px}.modul h3{font-size:25px}}
+
+.haken-liste{list-style:none;padding:0;margin:0}.haken-liste li{padding:9px 0;border-top:1px solid var(--linie);font-size:15.5px}.haken-liste li::before{content:"✓";color:var(--haus);font-weight:700;margin-right:10px}
+.haken-feld{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--text-2);line-height:1.5;margin:14px 0 6px}.haken-feld input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--haus)}
+
+/* Checkbox-Zeile: Text und Link als EIN Flex-Item, sonst reisst Flexbox die
+   Wörter vor dem Link in eine eigene schmale Spalte (Bug im ersten Entwurf) */
+.haken-feld span{flex:1 1 auto;min-width:0}
+
+/* FAQ als Akkordeon (natives <details>/<summary>, kein JS) */
+.frage{border-top:1px solid var(--linie);padding:0}
+.frage:last-child{border-bottom:1px solid var(--linie)}
+.frage summary{list-style:none;cursor:pointer;padding:20px 30px 20px 0;position:relative;-webkit-tap-highlight-color:transparent}
+.frage summary::-webkit-details-marker{display:none}
+.frage summary h3{font-weight:700;font-size:18px;letter-spacing:-.01em;margin:0}
+.frage summary::after{content:"+";position:absolute;right:0;top:16px;font-size:26px;font-weight:400;color:var(--haus);line-height:1;transition:transform .2s}
+.frage[open] summary::after{transform:rotate(45deg)}
+.frage summary:hover h3{color:var(--haus)}
+.frage p{font-size:15.5px;line-height:1.68;color:var(--text-2);max-width:64ch;padding:0 30px 20px 0;margin:0}
+.frage[open] summary{padding-bottom:10px}
+
+/* Starker Abschluss vor dem Demo-Formular */
+.abschluss{background:var(--haus);text-align:center;padding:64px 0}
+.abschluss-inner{max-width:640px;margin:0 auto;padding:0 44px}
+.abschluss h2{color:#fff;font-size:34px;margin-bottom:8px}
+.abschluss p{color:rgba(255,255,255,.82);font-size:16px;margin-bottom:22px}
+.abschluss .knopf.gross{display:inline-block;background:#fff;color:var(--haus);font-size:17px;padding:16px 34px;border-radius:10px;font-weight:700;text-decoration:none}
+.abschluss .knopf.gross:hover{background:#F0F5F2}
+.abschluss .klein{color:rgba(255,255,255,.75);margin-top:18px}
+.abschluss .klein a{color:#fff;text-decoration:underline}
+@media(max-width:700px){.abschluss{padding:46px 0}.abschluss h2{font-size:26px}}
+
+/* =====================================================================
+   Bewegung: Fortschrittsbalken, Kopfzeile, Hero, gestaffelte Reveals,
+   Hover-Akzente, Schritte-Linie, dekorative Blobs.
+   Alles gekapselt auf die Vertriebsseite — betrifft keine Kundenwebsites.
+   ===================================================================== */
+
+.fortschritt{position:fixed;top:0;left:0;height:3px;width:0;background:var(--haus);z-index:60;transition:width .12s linear}
+
+.kopf{transition:box-shadow .25s ease,background-color .25s ease}
+.kopf--tief{box-shadow:0 1px 0 var(--linie),0 8px 24px -18px rgba(11,32,27,.25);background:rgba(255,255,255,.92);backdrop-filter:saturate(1.1) blur(6px)}
+
+/* --- Hero: Blobs, Bild-Parallax, gestaffeltes Eintreten beim Laden --- */
+.v-hero{position:relative;overflow:visible}
+.blob{position:absolute;border-radius:50%;filter:blur(50px);pointer-events:none;z-index:0;opacity:.55}
+.blob-1{width:360px;height:360px;background:radial-gradient(circle,var(--haus2) 0%,transparent 70%);top:-60px;left:-80px;animation:blob-drift-1 16s ease-in-out infinite alternate}
+.blob-2{width:300px;height:300px;background:radial-gradient(circle,#CFE3D8 0%,transparent 70%);bottom:-100px;right:6%;animation:blob-drift-2 19s ease-in-out infinite alternate}
+@keyframes blob-drift-1{from{transform:translate(0,0) scale(1)}to{transform:translate(30px,20px) scale(1.08)}}
+@keyframes blob-drift-2{from{transform:translate(0,0) scale(1)}to{transform:translate(-24px,-16px) scale(1.05)}}
+.hero-text,.hero-bild{position:relative;z-index:1}
+.hero-bild img{will-change:transform}
+.js .hero-text .ueberzeile,.js .hero-text h1,.js .hero-text p,.js .hero-text .hero-tat,.js .hero-text>.klein,.js .hero-bild{opacity:0;animation:hero-in .7s cubic-bezier(.16,.84,.44,1) forwards}
+.js .hero-text .ueberzeile{animation-delay:.05s}.js .hero-text h1{animation-delay:.15s}.js .hero-text p{animation-delay:.28s}.js .hero-text .hero-tat{animation-delay:.4s}.js .hero-text>.klein{animation-delay:.5s}.js .hero-bild{animation-delay:.3s;animation-name:hero-in-bild}
+@keyframes hero-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes hero-in-bild{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* --- Gestaffelte Reveals: Container bekommt .auf, Kinder folgen nach .da --- */
+.js .drei-karten.auf .karte-p,
+.js .recht-liste.auf>div,
+.js .tarife.auf .tarif,
+.js .schritte.auf>div{opacity:0;transform:translateY(20px);transition:opacity .55s cubic-bezier(.16,.84,.44,1),transform .55s cubic-bezier(.16,.84,.44,1)}
+.js .drei-karten.auf.da .karte-p,
+.js .recht-liste.auf.da>div,
+.js .tarife.auf.da .tarif,
+.js .schritte.auf.da>div{opacity:1;transform:none}
+.drei-karten.auf .karte-p:nth-child(1){transition-delay:0s}.drei-karten.auf .karte-p:nth-child(2){transition-delay:.1s}.drei-karten.auf .karte-p:nth-child(3){transition-delay:.2s}
+.recht-liste.auf>div:nth-child(1){transition-delay:0s}.recht-liste.auf>div:nth-child(2){transition-delay:.06s}.recht-liste.auf>div:nth-child(3){transition-delay:.12s}.recht-liste.auf>div:nth-child(4){transition-delay:.18s}.recht-liste.auf>div:nth-child(5){transition-delay:.24s}.recht-liste.auf>div:nth-child(6){transition-delay:.3s}
+.tarife.auf .tarif{transition-delay:calc(var(--i,0) * .1s)}
+.schritte.auf>div:nth-child(1){transition-delay:0s}.schritte.auf>div:nth-child(2){transition-delay:.12s}.schritte.auf>div:nth-child(3){transition-delay:.24s}.schritte.auf>div:nth-child(4){transition-delay:.36s}
+
+/* Modul-Zeilen: Text und Bild einzeln, Bild etwas zeitversetzt und mit Zoom-in */
+.js .modul.auf .modul-text{opacity:0;transform:translateY(20px);transition:opacity .6s cubic-bezier(.16,.84,.44,1),transform .6s cubic-bezier(.16,.84,.44,1)}
+.js .modul.auf>img,.js .modul.auf .handys{opacity:0;transform:scale(.95);transition:opacity .6s cubic-bezier(.16,.84,.44,1) .12s,transform .6s cubic-bezier(.16,.84,.44,1) .12s}
+.js .modul.auf.da .modul-text{opacity:1;transform:none}
+.js .modul.auf.da>img,.js .modul.auf.da .handys{opacity:1;transform:none}
+
+/* --- Hover-Akzente --- */
+.karte-p{transition:transform .25s ease,box-shadow .25s ease}
+.karte-p:hover{transform:translateY(-5px);box-shadow:0 20px 34px -22px rgba(11,32,27,.22)}
+.modul>img,.modul .handys img{transition:transform .4s cubic-bezier(.16,.84,.44,1)}
+.modul:hover>img{transform:scale(1.015)}
+.tarif{transition:transform .25s ease,box-shadow .25s ease}
+.tarif:hover{transform:translateY(-4px)}
+.tarif.hervor{animation:glut 3.2s ease-in-out infinite}
+@keyframes glut{0%,100%{box-shadow:0 20px 50px -30px rgba(11,93,74,.5)}50%{box-shadow:0 24px 58px -26px rgba(11,93,74,.68)}}
+
+/* Sanft schwebende Telefon-Mockups */
+.handys img{animation:schweben 4.5s ease-in-out infinite}
+.handys img:nth-child(2){animation-delay:.6s}
+@keyframes schweben{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.js .modul.auf.da .handys img{animation-name:schweben}   /* startet erst sichtbar, nicht währenddessen versteckt */
+
+/* Schritte: verbindende Linie zieht sich beim Erscheinen auf */
+.schritte{position:relative}
+.schritte::before{content:"";position:absolute;top:15px;left:15px;right:15px;height:2px;background:var(--linie);z-index:0}
+.schritte::after{content:"";position:absolute;top:15px;left:15px;width:0;height:2px;background:var(--haus);z-index:0;transition:width 1s cubic-bezier(.16,.84,.44,1) .3s}
+.schritte.auf.da::after{width:calc(100% - 30px)}
+.schritte>div{position:relative;z-index:1}
+.schritte b{transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.js .schritte.auf>div b{transform:scale(0)}
+.js .schritte.auf.da>div:nth-child(1) b{transform:scale(1);transition-delay:.15s}
+.js .schritte.auf.da>div:nth-child(2) b{transform:scale(1);transition-delay:.35s}
+.js .schritte.auf.da>div:nth-child(3) b{transform:scale(1);transition-delay:.55s}
+.js .schritte.auf.da>div:nth-child(4) b{transform:scale(1);transition-delay:.75s}
+
+/* Abschluss-Band: wandernde Punktstruktur, hüpfender Pfeil */
+.abschluss{position:relative;overflow:hidden}
+.abschluss::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.14) 1.5px,transparent 1.5px);background-size:26px 26px;animation:punkte-wandern 14s linear infinite;pointer-events:none}
+@keyframes punkte-wandern{from{background-position:0 0}to{background-position:130px 90px}}
+.abschluss-inner{position:relative;z-index:1}
+.abschluss .knopf.gross{transition:transform .2s ease,box-shadow .2s ease}
+.abschluss .knopf.gross:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 14px 30px -14px rgba(0,0,0,.35)}
+.pfeil-runter{display:inline-block;animation:pfeil-huepfen 1.6s ease-in-out infinite}
+@keyframes pfeil-huepfen{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+/* Formularfelder: sanfter Fokus-Ring */
+.feldg input,.feldg select,.feldg textarea,.haken-feld input{transition:border-color .18s ease,box-shadow .18s ease}
+.feldg input:focus,.feldg select:focus,.feldg textarea:focus{border-color:var(--haus);box-shadow:0 0 0 3px rgba(11,93,74,.14);outline:none}
+
+@media (prefers-reduced-motion:reduce){
+  .blob,.abschluss::before,.pfeil-runter,.handys img,.tarif.hervor,.schritte::after{animation:none!important}
+  .js .hero-text *,.js .hero-bild,.js .drei-karten.auf .karte-p,.js .recht-liste.auf>div,.js .tarife.auf .tarif,.js .schritte.auf>div,.js .modul.auf .modul-text,.js .modul.auf>img,.js .modul.auf .handys{opacity:1!important;transform:none!important;animation:none!important;transition:none!important}
+  .schritte::after{width:calc(100% - 30px)}
+  .js .schritte.auf>div b{transform:none!important}
+}
+@media(max-width:900px){.blob{display:none}}
+
+/* Anker landen unterhalb der festen Kopfzeile */
+html{scroll-padding-top:92px;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Preise: mehr Hierarchie, Icons, klarer Favorit */
+.tarif{padding:32px 30px 26px;border-radius:18px}
+.tarif .tagline{font-size:14px;color:var(--text-2);line-height:1.5;margin:4px 0 14px;min-height:42px}
+.tarif .preis{font-size:50px;margin-top:0}
+.tarif .ma{font-size:14px}.tarif .prokraft{color:var(--haus);font-weight:600;white-space:nowrap}
+.tarif ul{margin-top:8px}.tarif li{display:flex;align-items:flex-start;gap:10px;padding:9px 0;font-size:14.5px;line-height:1.45}
+.tarif li::before{content:none}
+.tarif li i{flex:none;width:18px;height:18px;border-radius:50%;background:var(--feld);margin-top:1px;position:relative}
+.tarif li i::after{content:"";position:absolute;left:6px;top:3px;width:4px;height:8px;border:solid var(--haus);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.tarif li.plus i{background:var(--haus)}.tarif li.plus i::after{border-color:#fff}
+.tarif.hervor{border-width:2px;transform:translateY(-8px)}
+.tarif.hervor:hover{transform:translateY(-12px)}
+.tarif.hervor::before{content:"";position:absolute;inset:0;border-radius:16px;background:linear-gradient(180deg,rgba(11,93,74,.06),transparent 40%);pointer-events:none}
+.tarif .knopf{margin-top:auto}
+.tarif-fuss{text-align:center;font-size:12.5px;color:var(--text-2);margin:10px 0 0}
+.preis-zusatz{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
+.preis-zusatz div{background:var(--feld);border-radius:12px;padding:14px 16px}.preis-zusatz b{display:block;font-size:14.5px;margin-bottom:3px}.preis-zusatz span{font-size:13.5px;color:var(--text-2);line-height:1.5}
+@media(max-width:900px){.tarif.hervor{transform:none}.preis-zusatz{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.preis-zusatz{grid-template-columns:1fr}}
+
+/* Logo mit Blatt */
+.logo-blatt{position:relative;display:inline-block;padding-right:22px}
+.logo-blatt .blatt{position:absolute;right:2px;top:-7px;width:17px;height:17px}
+
+/* Gründer */
+.gruender{background:var(--feld);padding:80px 0;margin:20px 0 0}
+.gruender-inner{max-width:1200px;margin:0 auto;padding:0 44px;display:grid;grid-template-columns:340px 1fr;gap:60px;align-items:center}
+.gruender-bild img{width:100%;height:auto;border-radius:20px;display:block;box-shadow:0 30px 60px -30px rgba(11,32,27,.4)}
+.gruender-text h2{font-size:34px;margin:10px 0 18px}
+.gruender-text p{color:var(--text-2);line-height:1.7;max-width:58ch;margin-bottom:14px}
+.gruender-name{margin-top:22px}.gruender-name b{color:var(--text);font-size:17px}.gruender-name span{font-size:14px}
+.gruender .hero-tat{margin-top:22px}
+.js .gruender.auf .gruender-bild{opacity:0;transform:translateX(-20px);transition:opacity .7s cubic-bezier(.16,.84,.44,1),transform .7s cubic-bezier(.16,.84,.44,1)}
+.js .gruender.auf .gruender-text{opacity:0;transform:translateY(16px);transition:opacity .7s cubic-bezier(.16,.84,.44,1) .15s,transform .7s cubic-bezier(.16,.84,.44,1) .15s}
+.js .gruender.auf.da .gruender-bild,.js .gruender.auf.da .gruender-text{opacity:1;transform:none}
+@media(max-width:900px){.gruender{padding:50px 0}.gruender-inner{grid-template-columns:1fr;gap:28px;padding:0 20px}.gruender-bild{max-width:260px}.gruender-text h2{font-size:26px}}
+@media (prefers-reduced-motion:reduce){.js .gruender.auf .gruender-bild,.js .gruender.auf .gruender-text{opacity:1!important;transform:none!important;transition:none!important}}

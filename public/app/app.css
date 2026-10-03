@@ -1,0 +1,114 @@
+/* Mitarbeiter-App — mobil zuerst, Light Mode, große Ziele (min. 48 px) */
+:root{
+  --haus:#0B5D4A; --haus2:#14876B; --papier:#F6F7F4; --feld:#E6EFE9;
+  --text:#13201B; --text2:#4E5C55; --linie:#D6DDD8;
+  --rot:#A32218; --rotf:#FDECEA; --gelb:#6B4E00; --gelbf:#FFF4D6;
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:17px;-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--papier);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overscroll-behavior-y:contain}
+button{font:inherit}
+a{color:var(--haus)}
+h1{font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+h2{font-size:15px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin:22px 0 10px}
+.klein{font-size:14px;color:var(--text2)}
+.laden{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;color:var(--text2);gap:14px}
+.kreis{width:34px;height:34px;border:3px solid var(--linie);border-top-color:var(--haus);border-radius:50%;animation:dreh .9s linear infinite}
+@keyframes dreh{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.kreis{animation:none}}
+
+/* Layout */
+.kopf{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--linie);padding:14px 18px;display:flex;align-items:center;gap:12px;min-height:60px}
+.kopf h1{flex:1;font-size:20px}
+.kopf .zurueck{background:none;border:0;color:var(--haus);font-weight:600;padding:8px 6px 8px 0;min-height:48px;font-size:17px}
+.inhalt{padding:16px 16px calc(84px + var(--safe-b))}
+.nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--linie);display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:var(--safe-b);z-index:20}
+.nav button{background:none;border:0;padding:10px 4px 8px;min-height:60px;color:var(--text2);font-size:12.5px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+.nav button.aktiv{color:var(--haus)}
+.nav svg{width:24px;height:24px}
+.nav .punkt{position:absolute;top:8px;right:calc(50% - 20px);width:9px;height:9px;border-radius:50%;background:var(--rot)}
+
+/* Karten und Listen */
+.karte{background:#fff;border:1px solid var(--linie);border-radius:14px;padding:16px 18px;margin-bottom:12px}
+.karte.klick{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.karte.klick:active{background:var(--papier)}
+.tag-kopf{font-weight:700;margin:18px 0 8px;display:flex;justify-content:space-between;align-items:baseline}
+.tag-kopf span{font-weight:500;color:var(--text2);font-size:14px}
+.einsatz{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center}
+.einsatz .zeit{font-weight:800;font-size:18px;color:var(--haus);line-height:1.15}
+.einsatz .zeit small{display:block;font-size:12.5px;color:var(--text2);font-weight:500}
+.einsatz .titel{font-weight:700;line-height:1.3}
+.einsatz .sub{font-size:14px;color:var(--text2);margin-top:2px}
+.marke{display:inline-block;font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:100px;white-space:nowrap}
+.marke.ok{background:var(--feld);color:var(--haus)}.marke.lauf{background:var(--gelbf);color:var(--gelb)}.marke.rot{background:var(--rotf);color:var(--rot)}.marke.aus{background:#EBEBEB;color:#4A4A4A}
+.leer{color:var(--text2);text-align:center;padding:40px 16px}
+.fakten{display:grid;grid-template-columns:110px 1fr;gap:8px 12px;font-size:15.5px}
+.fakten dt{color:var(--text2)}.fakten dd{font-weight:500;word-break:break-word}
+.hinweis{background:var(--gelbf);border-radius:10px;padding:12px 14px;font-size:15px;margin-top:12px}
+
+/* Knöpfe */
+.knopf{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--haus);color:#fff;border:0;border-radius:12px;padding:16px;font-size:18px;font-weight:700;min-height:58px;margin-top:12px;cursor:pointer}
+.knopf:active{background:var(--haus2)}
+.knopf.zweit{background:#fff;color:var(--text);border:2px solid var(--linie)}
+.knopf.rot{background:var(--rot)}
+.knopf:disabled{opacity:.5}
+.knopf.klein{min-height:48px;padding:11px;font-size:16px;margin-top:8px}
+.zeile{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}.zeile>*{min-width:0}
+
+/* Formulare */
+label{display:block;font-weight:600;margin:14px 0 6px;font-size:15.5px}
+input,select,textarea{width:100%;min-width:0;max-width:100%;border:2px solid var(--linie);border-radius:10px;padding:13px 14px;font:inherit;font-size:17px;background:#fff;color:var(--text);min-height:52px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--haus)}
+textarea{min-height:90px;resize:vertical}
+input.pin{font-size:30px;letter-spacing:.4em;text-align:center;font-weight:700}
+.fehler{background:var(--rotf);color:#6E1810;border-radius:10px;padding:12px 14px;margin:12px 0;font-size:15px}
+.erfolg{background:var(--feld);color:var(--haus);border-radius:10px;padding:12px 14px;margin:12px 0;font-size:15px;font-weight:600}
+
+/* Anmeldung */
+.anmelden{max-width:420px;margin:0 auto;padding:40px 22px}
+.anmelden .logo{width:64px;height:64px;margin:0 auto 18px}
+.anmelden h1{text-align:center;margin-bottom:6px}
+.anmelden p{text-align:center;color:var(--text2);margin-bottom:26px}
+
+/* Scanner */
+.scanner{position:fixed;inset:0;background:#000;z-index:50;display:flex;flex-direction:column}
+.scanner video{flex:1;width:100%;object-fit:cover}
+.scanner .rahmen{position:absolute;left:50%;top:45%;width:min(70vw,300px);aspect-ratio:1;transform:translate(-50%,-50%);border:3px solid #fff;border-radius:18px;box-shadow:0 0 0 100vmax rgba(0,0,0,.45)}
+.scanner .unten{position:absolute;left:0;right:0;bottom:0;padding:18px 18px calc(18px + var(--safe-b));background:linear-gradient(transparent,rgba(0,0,0,.7))}
+.scanner .unten p{color:#fff;text-align:center;margin-bottom:12px;font-weight:600}
+.scanner .knopf{margin-top:0}
+.scanner .manuell{background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.5)}
+
+/* Fotos */
+.fotos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.fotos .platz{aspect-ratio:1;background:var(--feld);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--haus);font-weight:700;font-size:13px;text-align:center;padding:6px;border:2px dashed #B5D2C3}
+.fotos .platz.wartend{border-style:solid;border-color:var(--gelb);background:var(--gelbf);color:var(--gelb)}
+.fotos .platz.ok{border-style:solid;border-color:var(--haus)}
+.fotoknopf{position:relative;overflow:hidden}
+.fotoknopf input{position:absolute;inset:0;opacity:0;font-size:100px;cursor:pointer}
+
+/* Offline-Leiste */
+.offline-leiste{position:fixed;left:0;right:0;top:0;z-index:60;background:var(--gelb);color:#fff;font-size:13.5px;font-weight:600;text-align:center;padding:7px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:34px}
+body.hat-leiste{padding-top:34px}body.hat-leiste .kopf{top:34px}
+
+/* Stundenkonto */
+.monat{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--linie)}
+.monat:last-child{border-bottom:0}
+.monat b{font-size:18px}
+.zeitzeile{display:grid;grid-template-columns:52px 1fr auto;gap:10px;padding:10px 0;border-bottom:1px solid var(--linie);font-size:15px;align-items:center}
+.zeitzeile:last-child{border-bottom:0}
+.zeitzeile b{color:var(--haus)}
+
+.nachricht{border-left:4px solid var(--haus);padding-left:12px}
+.nachricht.neu{background:var(--feld)}
+.nachricht .meta{font-size:13px;color:var(--text2);margin-bottom:3px}
+
+.gross{font-size:34px;font-weight:800;color:var(--haus);line-height:1}
+.mittig{text-align:center}
+.abstand{height:12px}
+.anfrage.offen{border-color:var(--haus);box-shadow:0 0 0 2px var(--feld)}
+.fotoblock{border:2px solid var(--linie);border-radius:14px;padding:12px;margin-bottom:10px;background:#fff}.fotoblock.aktiv{border-color:var(--haus);background:#F3F8F5}
+.fotokopf{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}.fotokopf b{font-size:15px;text-transform:uppercase;letter-spacing:.04em}.fotokopf span{font-size:13px;color:var(--text2)}
+.fotoreihe{display:flex;gap:8px;overflow-x:auto;margin-bottom:10px;min-height:40px}.fotoreihe figure{margin:0;flex:none;width:96px}.fotoreihe img{width:96px;height:72px;object-fit:cover;border-radius:8px;border:1px solid var(--linie);display:block}.fotoreihe figcaption{font-size:11px;color:var(--text2);text-align:center;margin-top:2px}.fotoreihe figure.offline img{opacity:.7}
+.fotoleer{font-size:13px;color:var(--text2);padding:10px 0}.fotoblock .fotoknopf{margin:0;width:100%;text-align:center}

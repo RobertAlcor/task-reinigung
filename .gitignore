@@ -1,0 +1,29 @@
+# ===== NIEMALS ins Repository =====
+# Zugangsdaten und Verschlüsselungsschlüssel
+public/system/config.php
+
+# Notfall-/Einmalzugänge (Generalschlüssel)
+public/takt-zugang-*.php
+public/notfall-*.php
+
+# Laufzeitdaten der Betriebe (Kundendaten, Fotos, Rechnungen)
+public/system/fotos/*
+public/system/rechnungen/*
+public/system/angebote/*
+public/system/vertraege/*
+public/system/backups/*
+public/uploads/betriebe/*
+!public/system/*/.gitkeep
+!public/uploads/betriebe/.gitkeep
+public/system/cron.lock
+
+# Betriebssystem und Editor
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.vscode/
+.idea/
+
+# Logs
+*.log

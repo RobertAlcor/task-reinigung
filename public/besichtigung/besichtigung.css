@@ -1,0 +1,31 @@
+/* Besichtigungs-Wizard — Ergänzungen zu app.css, Tablet und Handy */
+body{max-width:820px;margin:0 auto}
+.kopf .klein a,.kopf a{text-decoration:none;font-weight:600}
+.kopf .zurueck{font-size:26px;line-height:1;padding:4px 10px 6px 0}
+.fortschritt{display:grid;grid-auto-flow:column;gap:5px;padding:10px 16px 0}
+.fortschritt span{height:5px;border-radius:3px;background:var(--linie)}.fortschritt span.an{background:var(--haus)}
+.inhalt{padding-bottom:calc(120px + var(--safe-b))}
+.karte h3{font-size:15px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin:0 0 10px}
+label{margin:10px 0 0}label>input,label>select,label>textarea{margin-top:6px}
+.zaehler{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--linie)}
+.zaehler:last-child{border-bottom:0}
+.zaehler div{display:flex;align-items:center;gap:6px}
+.zaehler button{width:52px;height:52px;border-radius:12px;border:2px solid var(--linie);background:#fff;font-size:26px;font-weight:700;color:var(--haus)}
+.zaehler button:active{background:var(--feld)}
+.zaehler b{min-width:40px;text-align:center;font-size:22px}
+.schalter{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--linie);font-weight:500;cursor:pointer}
+.schalter:last-child{border-bottom:0}
+.schalter input{width:28px;height:28px;min-height:0;accent-color:var(--haus);margin:0}
+.skala{padding:8px 0;border-bottom:1px solid var(--linie)}.skala:last-child{border-bottom:0}
+.skala>span,.wahl>span{display:block;font-weight:600;margin-bottom:8px;font-size:15.5px}
+.skala div{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.skala button,.wahl button{min-height:50px;border-radius:10px;border:2px solid var(--linie);background:#fff;font-size:17px;font-weight:600;color:var(--text)}
+.skala button.an,.wahl button.an{background:var(--haus);border-color:var(--haus);color:#fff}
+.skala small{display:block;color:var(--text2);margin-top:6px;font-size:13.5px}
+.wahl{padding:6px 0 10px}.wahl div{display:flex;flex-wrap:wrap;gap:6px}.wahl button{padding:0 14px;font-size:15.5px}
+.leiste{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--linie);padding:12px 16px calc(12px + var(--safe-b));display:flex;justify-content:space-between;align-items:center;gap:12px;z-index:20;max-width:820px;margin:0 auto}
+.preis b{display:block;font-size:22px;color:var(--haus);line-height:1.1}.preis small{color:var(--text2);font-size:13px}
+.knoepfe{display:flex;gap:8px}.knoepfe .knopf{width:auto;min-width:110px;margin:0}
+.kalkbox .zeile2{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--linie)}
+.kalkbox .zeile2:last-child{border-bottom:0}.kalkbox .gesamt b{font-size:22px;color:var(--haus)}.kalkbox .gesamt{padding-top:14px}
+.fotos{grid-template-columns:repeat(3,1fr)}

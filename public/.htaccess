@@ -1,0 +1,44 @@
+# --- Grundschutz ---
+Options -Indexes
+ServerSignature Off
+
+# Zeichensatz
+AddDefaultCharset UTF-8
+
+# Versteckte Dateien und Sicherungen sperren
+<FilesMatch "^\.|\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|swp|example)$">
+  Require all denied
+</FilesMatch>
+
+# Authorization-Kopfzeile an PHP durchreichen (fuer Bearer-Token)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP:Authorization} .
+  RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>
+
+# Systemverzeichnis vollstaendig sperren (Konfiguration, Zugangsdaten, Schluessel)
+<IfModule mod_rewrite.c>
+  RewriteRule ^system(/|$) - [F,L]
+</IfModule>
+
+# API auf den zentralen Einstiegspunkt lenken
+<IfModule mod_rewrite.c>
+  RewriteRule ^api/(.*)$ api/index.php [QSA,L]
+  # Website-Unterseiten (Hauptdomain und Kundendomains)
+  RewriteRule ^(leistungen|ueber-uns|kontakt|impressum|datenschutz|registrieren)/?$ index.php?p=$1 [QSA,L]
+</IfModule>
+
+# Sicherheitskopfzeilen
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Mitarbeiter-App: Manifest-Typ und Service-Worker-Geltungsbereich
+AddType application/manifest+json .webmanifest
+<Files "sw.js">
+  Header set Service-Worker-Allowed "/app/"
+  Header set Cache-Control "no-cache"
+</Files>
