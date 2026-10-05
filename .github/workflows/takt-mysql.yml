@@ -1,0 +1,47 @@
+name: Takt native MySQL audit
+on:
+  push:
+    branches: ['audit/sicherheitspruefung-2026-10-03']
+    paths: ['audit/mysql-contract.php', '.github/workflows/takt-mysql.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mysql-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: takt-ci-only
+          MYSQL_DATABASE: takt_test_ci
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -ptakt-ci-only"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Import unchanged schema in isolated database
+        env:
+          MYSQL_PWD: takt-ci-only
+        run: |
+          mkdir -p audit-output
+          php -v > audit-output/php-version.txt
+          php -r 'if (!extension_loaded("pdo_mysql")) { exit(1); }'
+          mysql --host=127.0.0.1 --port=3306 --user=root takt_test_ci < datenbank/01-datenbank-komplett.sql
+      - name: Native SQL regression checks
+        env:
+          TAKT_TEST_DATABASE: '1'
+        run: php audit/mysql-contract.php > audit-output/mysql-contract.json
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: takt-mysql-contract
+          path: audit-output/
+          retention-days: 7
+          if-no-files-found: error
